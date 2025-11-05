@@ -6,7 +6,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 const sidebar = document.getElementById("details");
 
 // 🌐 Your backend URL (replace this with your Render backend link)
-const BACKEND_URL = "https://weatherapp-backend-xxxx.onrender.com";
+const BACKEND_URL = "https://weatherapp-backend-xtea.onrender.com/";
 
 async function fetchWeather(lat, lon) {
   const res = await fetch(`${BACKEND_URL}/api/forecast?lat=${lat}&lon=${lon}`);
