@@ -4,10 +4,15 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 const sidebar = document.getElementById("details");
+
+// 🌐 Your backend URL (replace this with your Render backend link)
+const BACKEND_URL = "https://weatherapp-backend.onrender.com";
+
 async function fetchWeather(lat, lon) {
-  const res = await fetch(`http://127.0.0.1:5000/api/forecast?lat=${lat}&lon=${lon}`);
+  const res = await fetch(`${BACKEND_URL}/api/forecast?lat=${lat}&lon=${lon}`);
   return await res.json();
 }
+
 function updateSidebar(data) {
   const current = data.current;
   const forecast = data.forecast.list.slice(0, 40);
@@ -49,6 +54,7 @@ function updateSidebar(data) {
 
   createVisualEffect(cond);
 }
+
 function clearEffects() {
   document.querySelectorAll(".rain-drop, .snow-flake, .cloud-shape, .sunshine").forEach(e => e.remove());
 }
@@ -86,17 +92,19 @@ function createVisualEffect(condition) {
     }
   }
 }
+
 map.on("click", async (e) => {
   sidebar.innerHTML = `<p>Fetching weather for [${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}]...</p>`;
   const data = await fetchWeather(e.latlng.lat, e.latlng.lng);
   if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
   else updateSidebar(data);
 });
+
 document.getElementById("search-btn").addEventListener("click", async () => {
   const city = document.getElementById("city-input").value.trim();
   if (!city) return;
 
-  const geoRes = await fetch(`http://127.0.0.1:5000/api/geocode?city=${city}`);
+  const geoRes = await fetch(`${BACKEND_URL}/api/geocode?city=${city}`);
   const geoData = await geoRes.json();
 
   if (!geoData.length) {
