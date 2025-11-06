@@ -1,6 +1,7 @@
 body {
   margin: 0;
   display: flex;
+  flex-direction: row;
   height: 100vh;
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
@@ -8,6 +9,7 @@ body {
   color: #fff;
 }
 
+/* Sidebar Styling */
 #sidebar {
   width: 350px;
   background: rgba(0, 0, 0, 0.85);
@@ -16,15 +18,21 @@ body {
   border-right: 2px solid #333;
 }
 
+/* Map Container (Important Fix) */
 #map {
   flex: 1;
+  height: 100vh;          /* 👈 Added: ensures full height on mobile */
+  width: 100%;            /* 👈 Added: ensures map fits screen width */
+  z-index: 0;
 }
 
+/* Heading */
 h2 {
   margin-top: 0;
   color: #00d8ff;
 }
 
+/* Forecast Cards */
 .forecast {
   background: rgba(255,255,255,0.1);
   margin: 10px 0;
@@ -32,6 +40,7 @@ h2 {
   border-radius: 10px;
 }
 
+/* Search Bar */
 #search-bar {
   position: absolute;
   top: 15px;
@@ -63,6 +72,7 @@ h2 {
   cursor: pointer;
 }
 
+/* Weather Animations */
 .rain-drop {
   position: fixed;
   top: -10px;
@@ -71,7 +81,12 @@ h2 {
   background: rgba(0,0,255,0.4);
   animation: rain 0.7s linear infinite;
 }
-@keyframes rain { to { transform: translateY(100vh); opacity: 0; } }
+@keyframes rain {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
 
 .snow-flake {
   position: fixed;
@@ -82,7 +97,12 @@ h2 {
   background: white;
   animation: snow 3s linear infinite;
 }
-@keyframes snow { to { transform: translateY(100vh); opacity: 0.5; } }
+@keyframes snow {
+  to {
+    transform: translateY(100vh);
+    opacity: 0.5;
+  }
+}
 
 .sunshine {
   position: fixed;
@@ -95,7 +115,10 @@ h2 {
   box-shadow: 0 0 60px yellow;
   animation: sunPulse 4s ease-in-out infinite;
 }
-@keyframes sunPulse { 0%,100% { transform: scale(1);} 50% { transform: scale(1.1);} }
+@keyframes sunPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
 
 .cloud-shape {
   position: fixed;
@@ -106,6 +129,24 @@ h2 {
   animation: cloudMove 45s linear infinite;
 }
 @keyframes cloudMove {
-  from { transform: translateX(-200px);}
-  to { transform: translateX(100vw);}
+  from { transform: translateX(-200px); }
+  to { transform: translateX(100vw); }
+}
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 2px solid #333;
+  }
+
+  #map {
+    height: 80vh;  /* prevent overflow on small screens */
+  }
 }
