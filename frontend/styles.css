@@ -16,13 +16,16 @@ body {
   padding: 20px;
   overflow-y: auto;
   border-right: 2px solid #333;
+  z-index: 1;
 }
 
-/* Map Container (Important Fix) */
+/* 🧭 Map Container (fully visible on all screens) */
 #map {
   flex: 1;
-  height: 100vh;          /* 👈 Added: ensures full height on mobile */
-  width: 100%;            /* 👈 Added: ensures map fits screen width */
+  width: 100%;
+  height: calc(100vh - 0px); /* ensure it fills entire viewport height */
+  min-height: 400px; /* fallback for very small screens */
+  position: relative;
   z-index: 0;
 }
 
@@ -147,6 +150,8 @@ h2 {
   }
 
   #map {
-    height: 80vh;  /* prevent overflow on small screens */
+    width: 100%;
+    height: 80vh; /* fits neatly below sidebar */
+    min-height: 300px;
   }
 }
