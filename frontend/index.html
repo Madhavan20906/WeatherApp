@@ -1,46 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Weather Explorer</title>
-
-  <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha512-sA+ePHGVtJ3xULy3M5I8n6V3hrPQjJ9rEC8p2Iz3SgOeWogR+eYZ1oE5sLZzJZ3g2g1QdOT64xkJ1X5ZlR6S2Q=="
-    crossorigin=""
-  />
-
-  <!-- Your Custom Styles -->
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
   <div id="sidebar">
     <h2>Weather Explorer</h2>
     <div id="details">
-      Click a location 🌍 or use the search bar to view details
+      <p>No forecast data available</p>
     </div>
   </div>
-
-  <!-- Map -->
   <div id="map"></div>
-
-  <!-- Search Bar -->
   <div id="search-bar">
-    <input type="text" id="city-input" placeholder="Enter city name..." />
+    <input id="city-input" placeholder="Enter city name (e.g. Chennai)" />
     <button id="search-btn">Search</button>
   </div>
 
-  <!-- Leaflet JS -->
-  <script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha512-Jk4u4+vYg2cEHz4DFx5Hn1D/Bf3/kbC2mltFfM6sjgiq7L0FdzM4Jsc/xgX4mC7/gKfZsEnk+o5fwjYWKTIhLg=="
-    crossorigin=""
-  ></script>
-
-  <!-- Your Script -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

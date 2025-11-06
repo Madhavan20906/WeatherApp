@@ -1,143 +1,144 @@
-// ✅ Initialize the map
-const map = L.map("map").setView([20, 78], 4);
+const apiKey = "YOUR_API_KEY"; // <-- put your OpenWeatherMap API key here
+const map = L.map("map").setView([13.0827, 80.2707], 5);
 
-// ✅ Add OpenStreetMap tiles
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// ✅ Leaflet resize fix (important for flexbox layouts)
-setTimeout(() => {
-  map.invalidateSize();
-}, 400);
+const detailsDiv = document.getElementById("details");
 
-const sidebar = document.getElementById("details");
+document.getElementById("search-btn").addEventListener("click", () => {
+  const city = document.getElementById("city-input").value.trim();
+  if (city) getWeather(city);
+});
 
-// 🌐 Your backend URL (keep this as your Render backend)
-const BACKEND_URL = "https://weatherapp-backend-xtea.onrender.com";
-
-async function fetchWeather(lat, lon) {
+async function getWeather(city) {
   try {
-    const res = await fetch(`${BACKEND_URL}/api/forecast?lat=${lat}&lon=${lon}`);
-    return await res.json();
+    // Get city coordinates first
+    const geoRes = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${city}&limit=1&appid=${apiKey}`
+    );
+    const geoData = await geoRes.json();
+    if (!geoData.length) throw new Error("City not found");
+
+    const { lat, lon } = geoData[0];
+    map.setView([lat, lon], 10);
+
+    // Current weather
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+    );
+    const data = await res.json();
+
+    // 5-day forecast
+    const forecastRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`
+    );
+    const forecastData = await forecastRes.json();
+
+    showWeather(data, forecastData);
   } catch (err) {
-    console.error("Error fetching weather:", err);
-    return { error: "Failed to fetch weather data" };
+    detailsDiv.innerHTML = `<p style="color:red;">Weather unavailable for "${city}"</p>`;
   }
 }
 
-function updateSidebar(data) {
-  const current = data.current;
-  const forecast = data.forecast.list.slice(0, 40);
-
-  const city = current.name;
-  const cond = current.weather[0].description;
-  const temp = current.main.temp;
+function showWeather(current, forecast) {
+  const name = current.name;
+  const temp = current.main.temp.toFixed(1);
+  const weather = current.weather[0].main;
+  const icon = current.weather[0].icon;
   const humidity = current.main.humidity;
   const wind = current.wind.speed;
 
-  sidebar.innerHTML = `
-    <h3>${city}</h3>
-    <p><b>Condition:</b> ${cond}</p>
-    <p><b>Temperature:</b> ${temp}°C</p>
-    <p><b>Humidity:</b> ${humidity}%</p>
-    <p><b>Wind Speed:</b> ${wind} m/s</p>
-    <h4>Next 5 Days Forecast</h4>
-    ${forecast
-      .filter((_, i) => i % 8 === 0)
-      .map(day => {
-        const d = new Date(day.dt_txt);
-        const weather = day.weather[0].description;
-        const advice =
-          weather.includes("rain") ? "☔ Carry an umbrella!" :
-          weather.includes("snow") ? "❄️ Wear warm clothes!" :
-          weather.includes("clear") ? "😎 Stay hydrated!" :
-          "🌤️ Enjoy the weather!";
-        return `
-          <div class="forecast">
-            <b>${d.toDateString()}</b>
-            <p>🌡️ ${day.main.temp}°C, 💧 ${day.main.humidity}%</p>
-            <p>${weather}</p>
-            <p>${advice}</p>
-          </div>
-        `;
-      })
-      .join("")}
+  // Add marker with popup
+  L.marker([current.coord.lat, current.coord.lon])
+    .addTo(map)
+    .bindPopup(`<b>${name}</b><br>${temp}°C, ${weather}`)
+    .openPopup();
+
+  // Group 5-day forecast by day (12:00 readings)
+  const days = forecast.list.filter((f) => f.dt_txt.includes("12:00:00"));
+
+  let forecastHTML = days
+    .map(
+      (d) => `
+      <div class="weather-day">
+        <h4>${new Date(d.dt_txt).toDateString()}</h4>
+        <img src="https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png"/>
+        <p>${d.main.temp.toFixed(1)}°C</p>
+        <p>${d.weather[0].description}</p>
+        <p>Humidity: ${d.main.humidity}%</p>
+        <p>Wind: ${d.wind.speed} m/s</p>
+      </div>`
+    )
+    .join("");
+
+  detailsDiv.innerHTML = `
+    <h3>${name}</h3>
+    <p><b>${weather}</b></p>
+    <p>Temperature: ${temp}°C</p>
+    <p>Humidity: ${humidity}%</p>
+    <p>Wind Speed: ${wind} m/s</p>
+    <h3>Next 5 Days Forecast</h3>
+    ${forecastHTML}
   `;
 
-  createVisualEffect(cond);
+  // Background weather effects 🌧️☀️☁️
+  applyWeatherEffect(weather);
 }
 
-function clearEffects() {
-  document.querySelectorAll(".rain-drop, .snow-flake, .cloud-shape, .sunshine").forEach(e => e.remove());
-}
+function applyWeatherEffect(weather) {
+  const body = document.body;
+  body.style.background = "#0b0c10";
+  const existingCanvas = document.querySelector("canvas");
+  if (existingCanvas) existingCanvas.remove();
 
-function createVisualEffect(condition) {
-  clearEffects();
-
-  if (condition.includes("rain")) {
-    for (let i = 0; i < 80; i++) {
-      const drop = document.createElement("div");
-      drop.className = "rain-drop";
-      drop.style.left = `${Math.random() * 100}vw`;
-      drop.style.animationDuration = `${0.5 + Math.random()}s`;
-      document.body.appendChild(drop);
-    }
-  } else if (condition.includes("snow")) {
-    for (let i = 0; i < 50; i++) {
-      const flake = document.createElement("div");
-      flake.className = "snow-flake";
-      flake.style.left = `${Math.random() * 100}vw`;
-      flake.style.animationDuration = `${2 + Math.random() * 3}s`;
-      document.body.appendChild(flake);
-    }
-  } else if (condition.includes("clear")) {
-    const sun = document.createElement("div");
-    sun.className = "sunshine";
-    document.body.appendChild(sun);
-  } else if (condition.includes("cloud")) {
-    for (let i = 0; i < 3; i++) {
-      const cloud = document.createElement("div");
-      cloud.className = "cloud-shape";
-      cloud.style.top = `${50 + i * 100}px`;
-      cloud.style.left = `${Math.random() * 80}vw`;
-      document.body.appendChild(cloud);
-    }
+  if (weather.includes("Rain")) {
+    createRainEffect();
+  } else if (weather.includes("Cloud")) {
+    body.style.background = "linear-gradient(#4e5d6c, #1c1e22)";
+  } else if (weather.includes("Clear")) {
+    body.style.background = "linear-gradient(#87ceeb, #f0e68c)";
   }
 }
 
-map.on("click", async (e) => {
-  sidebar.innerHTML = `<p>Fetching weather for [${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}]...</p>`;
-  const data = await fetchWeather(e.latlng.lat, e.latlng.lng);
-  if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
-  else updateSidebar(data);
-});
+function createRainEffect() {
+  const canvas = document.createElement("canvas");
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-document.getElementById("search-btn").addEventListener("click", async () => {
-  const city = document.getElementById("city-input").value.trim();
-  if (!city) return;
+  const drops = Array(300).fill().map(() => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    length: Math.random() * 20,
+    speed: Math.random() * 3 + 2,
+  }));
 
-  try {
-    const geoRes = await fetch(`${BACKEND_URL}/api/geocode?city=${city}`);
-    const geoData = await geoRes.json();
-
-    if (!geoData.length) {
-      sidebar.innerHTML = `<p>❌ City not found</p>`;
-      return;
+  function drawRain() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(174,194,224,0.5)";
+    ctx.lineWidth = 1;
+    for (let drop of drops) {
+      ctx.beginPath();
+      ctx.moveTo(drop.x, drop.y);
+      ctx.lineTo(drop.x, drop.y + drop.length);
+      ctx.stroke();
     }
-
-    const { lat, lon } = geoData[0];
-    map.setView([lat, lon], 8);
-
-    const data = await fetchWeather(lat, lon);
-    if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
-    else updateSidebar(data);
-  } catch (err) {
-    sidebar.innerHTML = `<p>❌ Failed to fetch data. Try again later.</p>`;
+    moveRain();
   }
-});
 
-// ✅ Additional safeguard: Ensure map resizes on window resize
-window.addEventListener("resize", () => {
-  map.invalidateSize();
-});
+  function moveRain() {
+    for (let drop of drops) {
+      drop.y += drop.speed;
+      if (drop.y > canvas.height) drop.y = 0;
+    }
+  }
+
+  function loop() {
+    drawRain();
+    requestAnimationFrame(loop);
+  }
+  loop();
+}

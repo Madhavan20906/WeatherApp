@@ -1,163 +1,79 @@
 body {
   margin: 0;
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
-  overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
-  background: #111;
+  font-family: "Poppins", sans-serif;
+  background: #0b0c10;
   color: #fff;
+  display: flex;
+  height: 100vh;
 }
 
-/* Sidebar Styling */
-#sidebar {
-  width: 350px;
-  background: rgba(0, 0, 0, 0.85);
-  padding: 20px;
-  overflow-y: auto;
-  border-right: 2px solid #333;
-  z-index: 1;
-}
-
-/* 🧭 Map Container (fully visible on all screens) */
 #map {
   flex: 1;
-  width: 100%;
-  height: 100vh;            /* Full height always */
-  position: relative;
-  z-index: 0;
-  min-height: 400px;        /* Fallback for smaller devices */
-}
-
-/* ✅ Leaflet-specific fix (must be outside media query) */
-.leaflet-container {
-  width: 100%;
   height: 100%;
   z-index: 0;
 }
 
-/* Heading */
-h2 {
-  margin-top: 0;
-  color: #00d8ff;
+#sidebar {
+  width: 320px;
+  background: rgba(20, 20, 20, 0.9);
+  padding: 20px;
+  overflow-y: auto;
+  box-shadow: 3px 0 10px rgba(0, 0, 0, 0.4);
 }
 
-/* Forecast Cards */
-.forecast {
-  background: rgba(255,255,255,0.1);
-  margin: 10px 0;
-  padding: 10px;
-  border-radius: 10px;
+#sidebar h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #1fa2ff;
 }
 
-/* Search Bar */
 #search-bar {
   position: absolute;
   top: 15px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 1000;
   display: flex;
-  gap: 8px;
-  background: rgba(0, 0, 0, 0.7);
-  padding: 8px 12px;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 10px;
   border-radius: 12px;
-  backdrop-filter: blur(5px);
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
-#search-bar input {
-  padding: 8px;
-  width: 240px;
-  border-radius: 8px;
+#city-input {
+  padding: 8px 12px;
+  width: 250px;
   border: none;
   outline: none;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: white;
+  font-size: 14px;
 }
 
-#search-bar button {
-  padding: 8px 14px;
-  border: none;
-  background-color: #007bff;
+#search-btn {
+  background: #1fa2ff;
   color: white;
+  border: none;
+  padding: 8px 14px;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: bold;
 }
 
-/* Weather Animations */
-.rain-drop {
-  position: fixed;
-  top: -10px;
-  width: 2px;
-  height: 10px;
-  background: rgba(0,0,255,0.4);
-  animation: rain 0.7s linear infinite;
-}
-@keyframes rain {
-  to {
-    transform: translateY(100vh);
-    opacity: 0;
-  }
+#details {
+  line-height: 1.6;
 }
 
-.snow-flake {
-  position: fixed;
-  top: -10px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: white;
-  animation: snow 3s linear infinite;
-}
-@keyframes snow {
-  to {
-    transform: translateY(100vh);
-    opacity: 0.5;
-  }
+.weather-day {
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  text-align: center;
 }
 
-.sunshine {
-  position: fixed;
-  top: 80px;
-  right: 100px;
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: radial-gradient(circle, yellow, orange);
-  box-shadow: 0 0 60px yellow;
-  animation: sunPulse 4s ease-in-out infinite;
-}
-@keyframes sunPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-}
-
-.cloud-shape {
-  position: fixed;
-  background: rgba(255,255,255,0.9);
-  border-radius: 50%;
-  width: 120px;
-  height: 70px;
-  animation: cloudMove 45s linear infinite;
-}
-@keyframes cloudMove {
-  from { transform: translateX(-200px); }
-  to { transform: translateX(100vw); }
-}
-
-/* 📱 Mobile Responsiveness */
-@media (max-width: 768px) {
-  body {
-    flex-direction: column;
-  }
-
-  #sidebar {
-    width: 100%;
-    height: auto;
-    border-right: none;
-    border-bottom: 2px solid #333;
-  }
-
-  #map {
-    width: 100%;
-    height: 80vh;   /* adjust map height for smaller screens */
-  }
+.weather-day img {
+  width: 50px;
+  height: 50px;
 }
