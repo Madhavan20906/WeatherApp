@@ -1,16 +1,29 @@
+// ✅ Initialize the map
 const map = L.map("map").setView([20, 78], 4);
+
+// ✅ Add OpenStreetMap tiles
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
 }).addTo(map);
 
+// ✅ Leaflet resize fix (important for flexbox layouts)
+setTimeout(() => {
+  map.invalidateSize();
+}, 400);
+
 const sidebar = document.getElementById("details");
 
-// 🌐 Your backend URL (replace this with your Render backend link)
-const BACKEND_URL = "https://weatherapp-backend-xtea.onrender.com/";
+// 🌐 Your backend URL (keep this as your Render backend)
+const BACKEND_URL = "https://weatherapp-backend-xtea.onrender.com";
 
 async function fetchWeather(lat, lon) {
-  const res = await fetch(`${BACKEND_URL}/api/forecast?lat=${lat}&lon=${lon}`);
-  return await res.json();
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/forecast?lat=${lat}&lon=${lon}`);
+    return await res.json();
+  } catch (err) {
+    console.error("Error fetching weather:", err);
+    return { error: "Failed to fetch weather data" };
+  }
 }
 
 function updateSidebar(data) {
@@ -104,17 +117,27 @@ document.getElementById("search-btn").addEventListener("click", async () => {
   const city = document.getElementById("city-input").value.trim();
   if (!city) return;
 
-  const geoRes = await fetch(`${BACKEND_URL}/api/geocode?city=${city}`);
-  const geoData = await geoRes.json();
+  try {
+    const geoRes = await fetch(`${BACKEND_URL}/api/geocode?city=${city}`);
+    const geoData = await geoRes.json();
 
-  if (!geoData.length) {
-    sidebar.innerHTML = `<p>❌ City not found</p>`;
-    return;
+    if (!geoData.length) {
+      sidebar.innerHTML = `<p>❌ City not found</p>`;
+      return;
+    }
+
+    const { lat, lon } = geoData[0];
+    map.setView([lat, lon], 8);
+
+    const data = await fetchWeather(lat, lon);
+    if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
+    else updateSidebar(data);
+  } catch (err) {
+    sidebar.innerHTML = `<p>❌ Failed to fetch data. Try again later.</p>`;
   }
+});
 
-  const { lat, lon } = geoData[0];
-  map.setView([lat, lon], 8);
-  const data = await fetchWeather(lat, lon);
-  if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
-  else updateSidebar(data);
+// ✅ Additional safeguard: Ensure map resizes on window resize
+window.addEventListener("resize", () => {
+  map.invalidateSize();
 });
