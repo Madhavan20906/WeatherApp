@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 import requests
 from flask_cors import CORS
+import os
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
+API_KEY = os.getenv("OPENWEATHER_API_KEY", "").strip()
 
-API_KEY = "76a29193e6116604879b4db2133ef505"
 BASE_URL = "https://api.openweathermap.org/data/2.5"
 
 @app.route('/api/geocode')
