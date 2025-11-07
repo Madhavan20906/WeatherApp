@@ -1,4 +1,4 @@
-WeatherApp (AngularJS + Flask + Leaflet)
+WeatherApp (Frontend + Flask + Leaflet)
 =======================================
 
 Contents:
@@ -11,7 +11,7 @@ Contents:
   - requirements.txt
 
 Description:
-- Frontend is a single-page AngularJS app using Leaflet (OpenStreetMap) for maps and leaflet.heat for heatmaps.
+- Frontend is a single-page HTML,CSS and JS app using Leaflet (OpenStreetMap) for maps and leaflet.heat for heatmaps.
 - Backend is a small Flask app that proxies requests to OpenWeatherMap so your API key stays on the server.
 
 Before running:
