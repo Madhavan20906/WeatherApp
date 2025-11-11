@@ -10,8 +10,6 @@ window.addEventListener("load", () => {
 });
 
 const sidebar = document.getElementById("details");
-
-// 🧠 Change this when deploying
 const BACKEND_URL = "https://weatherapp-backend-xtea.onrender.com";
 
 async function fetchWeather(lat, lon) {
@@ -32,8 +30,6 @@ function updateSidebar(data) {
   const temp = current.main.temp;
   const humidity = current.main.humidity;
   const wind = current.wind.speed;
-
-  // Sidebar text update
   sidebar.innerHTML = `
     <h3>${city}</h3>
     <p><b>Condition:</b> ${cond}</p>
@@ -66,19 +62,13 @@ function updateSidebar(data) {
       })
       .join("")}
   `;
-
-  // Apply weather effect
   createVisualEffect(cond);
   sidebarWeatherEffect(cond);
 }
-
-// 💧 Remove previous animations
 function clearEffects() {
   document.querySelectorAll(".rain-drop, .snow-flake, .cloud-shape, .sunshine, .sidebar-effect").forEach(e => e.remove());
   sidebar.style.background = "rgba(0,0,0,0.85)";
 }
-
-// ☀️ Main page weather effect
 function createVisualEffect(condition) {
   clearEffects();
 
@@ -112,13 +102,9 @@ function createVisualEffect(condition) {
     }
   }
 }
-
-// 🌧️ Sidebar weather effect
 function sidebarWeatherEffect(condition) {
   const effectWrapper = document.createElement("div");
   effectWrapper.className = "sidebar-effect";
-
-  // 💧 Realistic droplet effect for rain
   if (condition.includes("rain")) {
     sidebar.style.background = "linear-gradient(180deg, rgba(0,0,30,0.9), rgba(0,0,0,0.9))";
     for (let i = 0; i < 40; i++) {
@@ -130,8 +116,6 @@ function sidebarWeatherEffect(condition) {
       effectWrapper.appendChild(drop);
     }
   }
-
-  // ❄️ Gentle snow
   else if (condition.includes("snow")) {
     sidebar.style.background = "linear-gradient(180deg, rgba(200,200,255,0.1), rgba(0,0,0,0.8))";
     for (let i = 0; i < 15; i++) {
@@ -145,17 +129,12 @@ function sidebarWeatherEffect(condition) {
 
   sidebar.appendChild(effectWrapper);
 }
-
-
-// 🗺️ Click for weather
 map.on("click", async (e) => {
   sidebar.innerHTML = `<p>Fetching weather for [${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}]...</p>`;
   const data = await fetchWeather(e.latlng.lat, e.latlng.lng);
   if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
   else updateSidebar(data);
 });
-
-// 🔍 Search
 document.getElementById("search-btn").addEventListener("click", async () => {
   const city = document.getElementById("city-input").value.trim();
   if (!city) return;
