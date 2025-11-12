@@ -174,3 +174,6 @@ document.getElementById("search-btn").addEventListener("click", async () => {
   if (data.error) sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
   else updateSidebar(data);
 });
+window.addEventListener("resize", () => map.invalidateSize());
+window.addEventListener("orientationchange", () => map.invalidateSize());
+
