@@ -155,4 +155,6 @@ document.getElementById("search-btn").addEventListener("click", async () => {
 });
 window.addEventListener("resize", () => map.invalidateSize());
 window.addEventListener("orientationchange", () => map.invalidateSize());
-
+setTimeout(() => {
+  map.invalidateSize();
+}, 1000);
