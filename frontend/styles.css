@@ -72,7 +72,6 @@ h2 {
   margin-top: 0;
   color: #00d8ff;
 }
-/* Sidebar glass raindrop animation */
 .sidebar-effect {
   position: absolute;
   top: 0;
@@ -83,8 +82,6 @@ h2 {
   pointer-events: none;
   z-index: 2;
 }
-
-/* Raindrop style for sidebar */
 .raindrop-glass {
   position: absolute;
   width: 4px;
@@ -109,8 +106,6 @@ h2 {
     opacity: 0.4;
   }
 }
-
-/* Sidebar snow fallback */
 .snow-flake.small {
   width: 5px;
   height: 5px;

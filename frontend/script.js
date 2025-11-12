@@ -1,5 +1,4 @@
 const map = L.map("map", { zoomControl: true }).setView([13.0827, 80.2707], 6);
-
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
   tileSize: 256,
@@ -11,22 +10,16 @@ const canvas = document.getElementById("weatherCanvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
 let weatherType = null;
-
-// Adjust canvas size
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 window.addEventListener("resize", resizeCanvas);
 resizeCanvas();
-
-// Fetch weather
 async function fetchWeather(lat, lon) {
   const res = await fetch(`http://127.0.0.1:5000/api/forecast?lat=${lat}&lon=${lon}`);
   return res.json();
 }
-
-// Precautions generator
 function getPrecautions(condition) {
   const lower = condition.toLowerCase();
   if (lower.includes("rain")) return "☂ Carry an umbrella and wear waterproof shoes.";
@@ -36,8 +29,6 @@ function getPrecautions(condition) {
   if (lower.includes("mist") || lower.includes("fog")) return "🚗 Turn on fog lights and reduce speed.";
   return "🌍 Enjoy your day and stay aware of changing conditions.";
 }
-
-// Animation setup
 function createParticles(type) {
   particles = [];
   weatherType = type;
@@ -71,8 +62,6 @@ function drawParticles() {
 
   requestAnimationFrame(drawParticles);
 }
-
-// Update sidebar
 function updateSidebar(data) {
   const current = data.current;
   const forecast = data.forecast.list.slice(0, 10);
@@ -100,8 +89,6 @@ function updateSidebar(data) {
   if (condition.toLowerCase().includes("rain")) createParticles("rain");
   else particles = [];
 }
-
-// Map click event
 map.on("click", async (e) => {
   sidebar.innerHTML = `<p>Fetching weather for [${e.latlng.lat.toFixed(2)}, ${e.latlng.lng.toFixed(2)}]...</p>`;
   
@@ -109,23 +96,18 @@ map.on("click", async (e) => {
 
   if (data.error) {
     sidebar.innerHTML = `<p>❌ ${data.error}</p>`;
-    removeWeatherEffects(); // stop any running animation
+    removeWeatherEffects();
   } else {
     updateSidebar(data);
-
-    // 🌦️ Trigger the weather effect for this area
     const currentWeather = data.current?.weather?.[0]?.main;
     if (currentWeather) {
       showWeatherEffect(currentWeather);
     }
   }
 });
-
-// Start animation loop
 drawParticles();
-// 🌦️ Visual Weather Effects
 function showWeatherEffect(weatherMain) {
-  removeWeatherEffects(); // clear old effect
+  removeWeatherEffects();
 
   const effect = document.createElement("div");
   effect.id = "weather-effect";
@@ -149,12 +131,9 @@ function showWeatherEffect(weatherMain) {
       effect.classList.add("sunny");
       break;
     default:
-      // nothing
       break;
   }
 }
-
-// Remove previous effect before adding new one
 function removeWeatherEffects() {
   const old = document.getElementById("weather-effect");
   if (old) old.remove();
