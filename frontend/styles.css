@@ -1,7 +1,7 @@
 body {
   margin: 0;
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   font-family: 'Segoe UI', sans-serif;
   background: #111;
@@ -19,7 +19,7 @@ body {
 
 #map {
   flex: 1;
-  height: 100vh;
+  height: 100dvh;
   width: 100%;
   z-index: 0;
 }
