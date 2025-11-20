@@ -134,7 +134,7 @@ h2 {
 
   #map {
     width: 100%;
-    height: 70vh; /* map gets proper height on mobile */
+    height: 70dvh; /* map gets proper height on mobile */
   }
 }
 
